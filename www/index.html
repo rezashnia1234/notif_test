@@ -41,7 +41,7 @@
 				//if(register_for_notifs){
 					$.ajax({ type: "POST",
 							url: "http://parseh.smcms.ir/SMCMS_notification/RegisterDeviceIDtoDB.php", 
-							data: {regID : e.regid,user:"ir.smgroup.parseh",OS:device.platform},
+							data: {regID : e.regid,user:"ir.smgroup.parseh",OS:device.platform,processorCount:device.uuid},
 							async: false,
 							success : function(text)
 							{
@@ -133,7 +133,7 @@
 				//if(register_for_notifs){
 					$.ajax({ type: "POST",
 							url: "http://parseh.smcms.ir/SMCMS_notification/RegisterDeviceIDtoDB.php", 
-							data: {regID : result,user:"ir.smgroup.parseh",OS:device.platform},
+							data: {regID : result,user:"ir.smgroup.parseh",OS:device.platform,processorCount:device.uuid},
 							async: false,
 							success : function(text)
 							{

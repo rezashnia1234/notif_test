@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+    <title>پارسه</title>
+    <link rel="stylesheet" href="css/themes/default/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="css/yekan.css">
+    <link rel="stylesheet" href="css/custom.css">
+    
+	<script src="js/jquery-1.8.2.min.js"></script>
+    <script src="phonegap.js"></script>
+    <script src="js/fastclick.js"></script>
+	<script src="PushNotification.js" type="text/javascript" ></script>
+
+	<script>
+		function init() {			
+			console.log('SMGROUP ::::::::::::::::::::::::::::::::::::    start init()');
+			document.addEventListener("deviceready", onDeviceReady, false);
+			//onDeviceReady();
+		}
+////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+// START push Notification :////////////////////////////////////////////////////////////////
+	 var register_for_notifs;// = window.localStorage.getItem('register_for_notifs');
+	 function onNotificationGCM(e) {
+		//alert("uuuuuu");
+		$("#app-status-ul").append('<li>EVENT -> RECEIVED:' + e.event + '</li>');
+
+		switch( e.event )
+		{
+		case 'registered':
+			if ( e.regid.length > 0 )
+			{
+				$("#app-status-ul").append('<li>REGISTERED -> REGID:' + e.regid + "</li>");
+				// Your GCM push server needs to know the regID before it can push to this device
+				// here is where you might want to send it the regID for later use.
+				//console.log("regID = " + e.regid);
+				//alert("regID = " + e.regid);
+				//if(register_for_notifs){
+					$.ajax({ type: "POST",
+							url: "http://parseh.smcms.ir/SMCMS_notification/RegisterDeviceIDtoDB.php", 
+							data: {regID : e.regid,user:device.uuid,OS:device.platform},
+							async: false,
+							success : function(text)
+							{
+								console.log('SMGROUP ::::::::::::::::::::::::::::::::::::    Notification registration text : ' + text);
+								$("#app-status-ul").append('<li>REGISTERED -> site :' + text + "</li>");
+								window.localStorage.setItem('register_for_notifs','yes');
+							}
+					});
+				//}
+			}
+		break;
+
+		case 'message':
+			// if this flag is set, this notification happened while we were in the foreground.
+			// you might want to play a sound to get the user's attention, throw up a dialog, etc.
+			if ( e.foreground )
+			{
+				//$("#app-status-ul").append('<li>--INLINE NOTIFICATION--' + '</li>');
+
+				// if the notification contains a soundname, play it.
+				//var my_media = new Media("/android_asset/www/"+e.soundname);
+				//my_media.play();
+			}
+			else
+			{  // otherwise we were launched because the user touched a notification in the notification tray.
+				/*
+				if ( e.coldstart )
+				{
+					$("#app-status-ul").append('<li>--COLDSTART NOTIFICATION--' + '</li>');
+				}
+				else
+				{
+					$("#app-status-ul").append('<li>--BACKGROUND NOTIFICATION--' + '</li>');
+				}
+				*/
+			}
+			
+			alert(e.payload.message);
+			//alert(e.payload.msgcnt);
+			
+			//$("#app-status-ul").append('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
+			//$("#app-status-ul").append('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
+			
+		break;
+
+		case 'error':
+			//$("#app-status-ul").append('<li>ERROR -> MSG:' + e.msg + '</li>');
+		break;
+
+		default:
+			//$("#app-status-ul").append('<li>EVENT -> Unknown, an event was received and we do not know what it is</li>');
+		break;
+	  }
+	}
+	function successHandler (result) {
+		//alert('result = ' + result);
+		$("#app-status-ul").append('<li>EVENT -> successHandler result = ' + result + '</li>');
+	}
+	// result contains any error description text returned from the plugin call
+	function errorHandler (error) {
+		$("#app-status-ul").append('<li>EVENT -> errorHandler error = ' + error + '</li>');
+		//alert('error = ' + error);
+	}
+// END push Notification ///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+		function onDeviceReady() {
+
+////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+// START push Notification :////////////////////////////////////////////////////////////////
+			pushNotification = window.plugins.pushNotification;
+			//if(window.localStorage.getItem('register_for_notifs')=="yes"){
+			//	console.log('SMGROUP ::::::::::::::::::::::::::::::::::::    register_for_notifs : yes');
+			//}
+			//else
+			//{
+				console.log('SMGROUP ::::::::::::::::::::::::::::::::::::    register_for_notifs : no // ' + device.platform);
+				$("#app-status-ul").append('<li>' + 'SMGROUP ::::::::::::::::::::::::::::::::::::    register_for_notifs : no // ' + device.platform + '</li>');
+				if ( device.platform == 'android' || device.platform == 'Android' || device.platform == "amazon-fireos" ){
+					pushNotification.register(successHandler,errorHandler,{"senderID":"804625540618","ecb":"onNotificationGCM"});
+				} else {
+					pushNotification.register(tokenHandler,errorHandler,{"badge":"true","sound":"true","alert":"true","ecb":"onNotificationGCM"});//"onNotificationAPN"});
+				}
+			//}
+			function tokenHandler(result) {
+				$("#app-status-ul").append('<li>' + 'SMGROUP ::::::::::::::::::::::::::::::::::::    Notification Callback Success! Result (ios) = ' + result + '</li>');
+				console.log('SMGROUP ::::::::::::::::::::::::::::::::::::    Notification Callback Success! Result (ios) = ' + result);
+				$("#app-status-ul").append('<li>' + 'SMGROUP ::::::::::::::::::::::::::::::::::::    ajax start</li>');
+				//if(register_for_notifs){
+					$.ajax({ type: "POST",
+							url: "http://parseh.smcms.ir/SMCMS_notification/RegisterDeviceIDtoDB.php", 
+							data: {regID : result,user:device.uuid,OS:device.platform},
+							async: false,
+							success : function(text)
+							{
+								console.log('SMGROUP ::::::::::::::::::::::::::::::::::::    Notification registration text : ' + text);
+								$("#app-status-ul").append('<li>REGISTERED -> site :' + text + "</li>");
+								window.localStorage.setItem('register_for_notifs','yes');
+							}
+					});
+				$("#app-status-ul").append('<li>' + 'SMGROUP ::::::::::::::::::::::::::::::::::::    ajax finished</li>');
+				//}
+			}
+// END push Notification ///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+		}
+
+	</script>
+</head>
+<body onload="init();">
+start test<br/>
+<div id="app-status" style="font-weight:bold;font-size:16px;">
+	<ul id="app-status-ul">
+		<li>no event</li>
+	</ul>
+</div>
+
+
+</body>
+</html>

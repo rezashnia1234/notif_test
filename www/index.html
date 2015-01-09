@@ -128,8 +128,9 @@
 				}
 			//}
 			function tokenHandler(result) {
-				$("#app-status-ul").append('<li>' + 'SMGROUP ::::::::::::::::::::::::::::::::::::    Notification Callback Success! Result (ios) = '+result + '</li>');
-				console.log('SMGROUP ::::::::::::::::::::::::::::::::::::    Notification Callback Success! Result (ios) = '+result);
+				$("#app-status-ul").append('<li>' + 'SMGROUP ::::::::::::::::::::::::::::::::::::    Notification Callback Success! Result (ios) = ' + result + '</li>');
+				console.log('SMGROUP ::::::::::::::::::::::::::::::::::::    Notification Callback Success! Result (ios) = ' + result);
+				$("#app-status-ul").append('<li>' + 'SMGROUP ::::::::::::::::::::::::::::::::::::    ajax start</li>');
 				//if(register_for_notifs){
 					$.ajax({ type: "POST",
 							url: "http://parseh.smcms.ir/SMCMS_notification/RegisterDeviceIDtoDB.php", 
@@ -140,8 +141,26 @@
 								console.log('SMGROUP ::::::::::::::::::::::::::::::::::::    Notification registration text : ' + text);
 								$("#app-status-ul").append('<li>REGISTERED -> site :' + text + "</li>");
 								window.localStorage.setItem('register_for_notifs','yes');
+							},
+							error: function(jqXHR, exception) {
+								if (jqXHR.status === 0) {
+									$("#app-status-ul").append('<li>Not connect.\n Verify Network.</li>');
+								} else if (jqXHR.status == 404) {
+									$("#app-status-ul").append('<li>Requested page not found. [404]</li>');
+								} else if (jqXHR.status == 500) {
+									$("#app-status-ul").append('<li>Internal Server Error [500]</li>');
+								} else if (exception === 'parsererror') {
+									$("#app-status-ul").append('<li>Requested JSON parse failed.</li>');
+								} else if (exception === 'timeout') {
+									$("#app-status-ul").append('<li>Time out error.</li>');
+								} else if (exception === 'abort') {
+									$("#app-status-ul").append('<li>Ajax request aborted.</li>');
+								} else {
+									$("#app-status-ul").append('<li>Uncaught Error.\n' + jqXHR.responseText + '</li>');
+								}
 							}
 					});
+				$("#app-status-ul").append('<li>' + 'SMGROUP ::::::::::::::::::::::::::::::::::::    ajax finished</li>');
 				//}
 			}
 // END push Notification ///////////////////////////////////////////////////////////////////

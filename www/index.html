@@ -137,9 +137,8 @@
 							async: false,
 							success : function(text)
 							{
-								//last_articles_version = text;
-								$("#app-status-ul").append('<li>' + 'SMGROUP ::::::::::::::::::::::::::::::::::::    Notification registration text : ' + text + '</li>');
 								console.log('SMGROUP ::::::::::::::::::::::::::::::::::::    Notification registration text : ' + text);
+								$("#app-status-ul").append('<li>REGISTERED -> site :' + text + "</li>");
 								window.localStorage.setItem('register_for_notifs','yes');
 							}
 					});

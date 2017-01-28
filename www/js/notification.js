@@ -10,6 +10,8 @@ function errorHandler (error) {
 
 
 function register_notification_home() {
+	alert("register_notification_home start");
+	
 	var push = PushNotification.init({
 		android: {
 			senderID: "804625540618"
@@ -40,6 +42,8 @@ function register_notification_home() {
 		// e.message
 		alert("push error = " + e.message);
 	});
+	
+	alert("register_notification_home end");
 }
 
 

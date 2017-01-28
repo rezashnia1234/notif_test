@@ -8,40 +8,39 @@ function errorHandler (error) {
 
 
 
-var push = PushNotification.init({
-    android: {
-        senderID: "804625540618"
-    },
-    browser: {
-        pushServiceURL: 'http://push.api.phonegap.com/v1/push'
-    },
-    ios: {
-        alert: "true",
-        badge: "true",
-        sound: "true"
-    },
-    windows: {}
-});
 
-push.on('registration', function(data) {
-    // data.registrationId
-	alert("registrationId : " + data);
-});
+function register_notification_home() {
+	var push = PushNotification.init({
+		android: {
+			senderID: "804625540618"
+		},
+		ios: {
+			alert: "true",
+			badge: "true",
+			sound: "true"
+		},
+		windows: {}
+	});
 
-push.on('notification', function(data) {
-    // data.message,
-    // data.title,
-    // data.count,
-    // data.sound,
-    // data.image,
-    // data.additionalData
-});
+	push.on('registration', function(data) {
+		// data.registrationId
+		alert("registration event: " + data.registrationId);
+	});
 
-push.on('error', function(e) {
-    // e.message
-	alert("error" + e.message);
-});
+	push.on('notification', function(data) {
+		// data.message,
+		// data.title,
+		// data.count,
+		// data.sound,
+		// data.image,
+		// data.additionalData
+	});
 
+	push.on('error', function(e) {
+		// e.message
+		alert("push error = " + e.message);
+	});
+}
 
 
 
